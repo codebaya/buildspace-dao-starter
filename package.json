@@ -6,13 +6,15 @@
     "@thirdweb-dev/react": "^2.0.3",
     "@thirdweb-dev/sdk": "^2.0.19",
     "ethers": "^5.6.2",
+    "msw": "^0.39.2",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "react-scripts": "5.0.0",
+    "react-scripts": "^5.0.1",
+    "ts": "^0.0.0",
     "util": "^0.12.4"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "react-scripts start GENERATE_SOURCEMAP=false",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

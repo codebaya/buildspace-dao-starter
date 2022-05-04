@@ -1,4 +1,7 @@
 {
   "name": "mydao-scripts",
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "@ethersproject/contracts": "^5.6.0"
+  }
 }

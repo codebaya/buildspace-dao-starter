@@ -1,5 +1,5 @@
-import {useAddress, useEditionDrop, useMetamask} from "@thirdweb-dev/react";
-import { useState, useEffect } from "react";
+import {useAddress, useEditionDrop, useMetamask, useToken } from "@thirdweb-dev/react";
+import { useState, useEffect, useMemo } from "react";
 
 const App = () => {
 
@@ -8,12 +8,81 @@ const App = () => {
     const connectWithMetamask = useMetamask();
     console.log("Address : ", address);
 
+    // Initialize our token contract
+    const token = useToken("0xe2d6AF4C35Ad7B1fc76f84746D3b936E361bC962");
     // Initialize our editionDrop contract
     const editionDrop = useEditionDrop("0xB84Eb3D9FF6Aad0994DDFC93c6CC12fCB0d3aC97")
     // State variable for us to know if user has our NFT
     const [hasClaimedNFT, setHasClaimedNFT] = useState(false);
     // isClaiming lets us easily keep a loading state while the NFT is minting
     const [isClaiming, setIsClaiming] = useState(false);
+
+    // Holds the amount of token each member has in state
+    const [memberTokenAmounts, setMemberTokenAmounts] = useState([]);
+    // the array holding all of our members addresses.
+    const [memberAddresses, setMemberAddresses] = useState([]);
+
+    // A fancy function to shorten someone's wallet address, no need to show the whole thing
+    const shortenAddress = (str) => {
+        return str.substring(0, 6) + "..." + str.substring(str.length - 4);
+    };
+
+    // This useEffect grabs all the addresses of our member's holding our NFT.
+    useEffect(() => {
+        if(!hasClaimedNFT) {
+            return;
+        }
+
+        // Just like we did in the 7-airdrop-token.js file! Grab the users who hold our NFT
+        // with tokenId 0.
+        const getAllAddresses = async () => {
+            try {
+                const memberAddresses = await editionDrop.history.getAllClaimerAddresses(0);
+                setMemberAddresses(memberAddresses);
+                console.log("Members addresses", memberAddresses);
+            } catch (error) {
+                console.error("Failed to get member's list", error);
+            }
+        };
+        getAllAddresses();
+    }, [hasClaimedNFT, editionDrop.history]);
+
+    // This useEffect grabs the # of token each member holds.
+    useEffect(() => {
+        if(!hasClaimedNFT) {
+            return;
+        }
+
+        const getAllBalances = async () => {
+            try {
+                const amounts = await token.history.getAllHolderBalances();
+                setMemberTokenAmounts(amounts);
+                console.log("amount", amounts);
+
+            } catch (error) {
+                console.error("Failed to get member balances", error);
+            }
+        };
+        getAllBalances();
+    }, [hasClaimedNFT, token.history]);
+
+    // Now, we combine the memberAddresses and memberTokenAmounts into a single array
+    const memberList = useMemo(() => {
+        return memberAddresses.map((address) => {
+            // We're checking if we're finding the address in the memberTokenAmounts array.
+            // If we are, we'll return the amount of token the user has.
+            // otherwise, return 0.
+            const member = memberTokenAmounts?.find(({holder}) => holder === address);
+
+            return {
+                address, tokenAmount: member?.balance.displayValue || "0",
+            }
+        });
+    }, [memberAddresses, memberTokenAmounts]);
+
+
+
+
 
     useEffect(() => {
         // if they don't have a connected wallet, exit!
@@ -71,12 +140,34 @@ const App = () => {
     if (hasClaimedNFT) {
         return (
             <div className="member-page">
-                <h1>WSDAO Membership Page</h1>
-                <p>Congratulations on Being a member</p>
-                <a href={`https://testnets.opensea.io/assets/${editionDrop.getAddress()}/0`} >Check it out on OpenSea</a>
+                <h1>🍪WS-DAO Member Dashboard</h1>
+                <p>Congratulations on being a member</p>
+                <div>
+                    <div>
+                        <h2>Member List</h2>
+                        <table className="card">
+                            <thead>
+                            <tr>
+                                <th>Address</th>
+                                <th>Token Amount</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {memberList.map((member) => {
+                                return (
+                                    <tr key={member.address}>
+                                        <td>{shortenAddress(member.address)}</td>
+                                        <td>{member.tokenAmount}</td>
+                                    </tr>
+                                );
+                            })}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
-        )
-    }
+        );
+    };
     return (
         <div className="mint-nft">
             <h1> Mint your FREE WSDAO membership NFT</h1>

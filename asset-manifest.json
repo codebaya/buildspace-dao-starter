@@ -1,0 +1,11 @@
+{
+  "files": {
+    "main.css": "/codebaya/wsdao/static/css/main.71d79c49.css",
+    "main.js": "/codebaya/wsdao/static/js/main.01a2710d.js",
+    "index.html": "/codebaya/wsdao/index.html"
+  },
+  "entrypoints": [
+    "static/css/main.71d79c49.css",
+    "static/js/main.01a2710d.js"
+  ]
+}

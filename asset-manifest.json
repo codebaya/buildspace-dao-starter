@@ -1,11 +1,11 @@
 {
   "files": {
-    "main.css": "/codebaya/wsdao/static/css/main.71d79c49.css",
-    "main.js": "/codebaya/wsdao/static/js/main.01a2710d.js",
-    "index.html": "/codebaya/wsdao/index.html"
+    "main.css": "/codebaya/buildspace-dao-starter/static/css/main.71d79c49.css",
+    "main.js": "/codebaya/buildspace-dao-starter/static/js/main.4ab1bc82.js",
+    "index.html": "/codebaya/buildspace-dao-starter/index.html"
   },
   "entrypoints": [
     "static/css/main.71d79c49.css",
-    "static/js/main.01a2710d.js"
+    "static/js/main.4ab1bc82.js"
   ]
 }
